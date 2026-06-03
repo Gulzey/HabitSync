@@ -13,9 +13,9 @@ const FAQ_ITEMS = [
       'HabitSync is local-first. Your habits, streaks, and progress are saved on this device first with AsyncStorage.',
   },
   {
-    question: 'How will cloud backup work?',
+    question: 'Cloud backup - coming soon',
     answer:
-      'Cloud backup will be optional. If you enable it in Settings, HabitSync will keep saving locally first, then push a backup to the cloud when syncing is available.',
+      'Cloud backup is planned for a later release. For now, HabitSync is fully local-first and keeps your habit data on this device.',
   },
   {
     question: 'Can I edit a habit after creating it?',

@@ -22,7 +22,6 @@ import {
   loadUserName,
   saveHabits,
   saveUserName,
-  syncDataWithCloud,
   toggleHabit,
 } from '../utils/storage';
 
@@ -80,8 +79,6 @@ const MOTIVATIONAL_QUOTES = [
   'Progress is built one check at a time.',
   'Make today easy to repeat.',
 ];
-
-const CLOUD_SYNC_USER_ID = 'local-device-user';
 
 function getTodayString() {
   const today = new Date();
@@ -382,7 +379,6 @@ export default function DashboardScreen() {
   const [userNameHasChanged, setUserNameHasChanged] = useState(false);
   const [visibleWeekStart, setVisibleWeekStart] = useState(() => getWeekStart(new Date()));
   const [pendingDeleteHabit, setPendingDeleteHabit] = useState(null);
-  const [syncRevision, setSyncRevision] = useState(0);
   const todayString = useMemo(getTodayString, []);
   const theme = THEMES[themeMode];
 
@@ -407,12 +403,6 @@ export default function DashboardScreen() {
       mounted = false;
     };
   }, []);
-
-  useEffect(() => {
-    if (!loading) {
-      syncDataWithCloud(CLOUD_SYNC_USER_ID);
-    }
-  }, [loading, syncRevision]);
 
   const completedCount = habits.filter((habit) => isCompletedToday(habit, todayString)).length;
   const completionPercentage = habits.length
@@ -451,7 +441,6 @@ export default function DashboardScreen() {
     try {
       const persistedHabits = await toggleHabit(habitId, todayString);
       setHabits(persistedHabits);
-      setSyncRevision((revision) => revision + 1);
     } catch (error) {
       console.warn('Failed to toggle habit.', error);
       setHabits(previousHabits);
@@ -480,7 +469,6 @@ export default function DashboardScreen() {
 
     try {
       await saveHabits(nextHabits);
-      setSyncRevision((revision) => revision + 1);
     } catch (error) {
       console.warn('Failed to add habit.', error);
       setHabits(habits);
@@ -496,7 +484,6 @@ export default function DashboardScreen() {
 
     try {
       await saveHabits(nextHabits);
-      setSyncRevision((revision) => revision + 1);
     } catch (error) {
       console.warn('Failed to remove habit.', error);
       setHabits(previousHabits);

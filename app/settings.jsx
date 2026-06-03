@@ -3,20 +3,24 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView, ScrollView, StyleSheet, Text, Pressable, Switch, View } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
-function SettingSwitchCard({ title, description, value, onValueChange }) {
+function SettingSwitchCard({ title, description, value, onValueChange, disabled = false, badge }) {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, disabled && styles.cardDisabled]}>
       <View style={styles.cardHeader}>
-        <Text style={styles.cardTitle}>{title}</Text>
+        <View style={styles.cardTitleWrap}>
+          <Text style={[styles.cardTitle, disabled && styles.disabledText]}>{title}</Text>
+          {badge && <Text style={styles.badge}>{badge}</Text>}
+        </View>
         <Switch
+          disabled={disabled}
           ios_backgroundColor="#3A3A3A"
           onValueChange={onValueChange}
-          thumbColor={value ? '#FFFFFF' : '#B8B8B8'}
-          trackColor={{ false: '#3A3A3A', true: '#BFA7FF' }}
+          thumbColor={disabled ? '#7A7A7A' : value ? '#FFFFFF' : '#B8B8B8'}
+          trackColor={{ false: disabled ? '#2A2A2A' : '#3A3A3A', true: '#BFA7FF' }}
           value={value}
         />
       </View>
-      <Text style={styles.cardText}>{description}</Text>
+      <Text style={[styles.cardText, disabled && styles.disabledText]}>{description}</Text>
     </View>
   );
 }
@@ -47,7 +51,9 @@ export default function SettingsScreen() {
 
         <SettingSwitchCard
           title="Cloud backup"
-          description="Optionally back up your habits to cloud storage so your progress can be restored later."
+          badge="Coming soon"
+          description="Optional cloud backup is planned, but HabitSync is local-first for this release. Your data stays on this device."
+          disabled
           value={cloudBackupEnabled}
           onValueChange={setCloudBackupEnabled}
         />
@@ -108,22 +114,44 @@ const styles = StyleSheet.create({
     marginTop: 14,
     padding: 16,
   },
+  cardDisabled: {
+    opacity: 0.72,
+  },
   cardHeader: {
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
+  cardTitleWrap: {
+    flex: 1,
+    paddingRight: 12,
+  },
   cardTitle: {
     color: '#FFFFFF',
-    flex: 1,
     fontSize: 17,
     fontWeight: '800',
-    paddingRight: 12,
+  },
+  badge: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#2A2438',
+    borderColor: '#5B4B85',
+    borderRadius: 999,
+    borderWidth: 1,
+    color: '#D8C9FF',
+    fontSize: 11,
+    fontWeight: '900',
+    marginTop: 7,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    textTransform: 'uppercase',
   },
   cardText: {
     color: '#A8A8A8',
     fontSize: 14,
     lineHeight: 21,
     marginTop: 8,
+  },
+  disabledText: {
+    color: '#777777',
   },
 });
