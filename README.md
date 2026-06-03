@@ -1,19 +1,42 @@
 # HabitSync
 
-HabitSync is a React Native / Expo habit tracker app. It is built around a local-first setup, so habits are saved on the device first and can be synced to a backend later if cloud backup is enabled.
+HabitSync is a mobile habit tracker I built with React Native and Expo.
 
-## What it does
+The idea is simple: add habits, tick them off each day, and see your progress without needing an account or internet connection. Right now the app is local-first, so everything is saved on the phone first using AsyncStorage.
 
-- Add and remove habits
-- Tick habits off for the day
-- Track current and longest streaks
-- Show daily completion progress
-- Show weekly progress in a small graph
-- Switch between dark and light mode
-- Store habit data locally with AsyncStorage
-- Includes a basic Express/MongoDB backend for syncing
+Cloud backup is planned, but it is not switched on in the release build yet.
 
-## Running the app
+## What is in the app right now
+
+- Add habits
+- Delete habits by swiping the card
+- Confirm before deleting
+- Tick off habits for today
+- Current streak and longest streak tracking
+- Daily completion percentage
+- Weekly progress graph
+- Flick back and forward through weeks
+- Editable username on the home screen
+- Dark and light theme button on the home screen
+- FAQ page
+- Settings page
+- Cloud backup shown as coming soon
+- Local-first storage with AsyncStorage
+
+## How storage works
+
+The app saves habit data on the device first.
+
+That means:
+
+- the app works offline
+- habits do not need a login yet
+- the phone data is the source of truth
+- cloud backup will be added later as an optional extra
+
+There is a backend folder in the project for MongoDB sync work, but the Play Store version is not using cloud sync yet.
+
+## Running the app locally
 
 From the project root:
 
@@ -22,17 +45,33 @@ npm install
 npx expo start --tunnel
 ```
 
-Then scan the QR code with Expo Go.
-
-If the app gets stuck with old cached code:
+If Expo is showing old code, clear the cache:
 
 ```bash
 npx expo start --tunnel --clear
 ```
 
-## Running the backend
+## Android release
 
-The backend lives in the `backend` folder.
+The Android package name is:
+
+```text
+com.gulzey.habitsync
+```
+
+The app is configured for EAS Build. To make a Play Store build:
+
+```bash
+npx eas-cli build --platform android --profile production
+```
+
+That creates an Android App Bundle file for Google Play.
+
+For Google Play Console, upload the `.aab` to internal testing first. After that, fill in the store listing, screenshots, content rating, data safety, and privacy policy sections.
+
+## Backend
+
+The backend is in the `backend` folder.
 
 ```bash
 cd backend
@@ -40,38 +79,28 @@ npm install
 npm run dev
 ```
 
-The backend uses `MONGO_URI` from `backend/.env` and exposes:
+It has a basic Express and MongoDB setup with:
 
 ```text
 GET /health
 POST /api/sync
 ```
 
+This is here for the cloud backup work later. It should not be treated as production-ready until auth and proper user accounts are added.
+
+## What is planned next
+
+- Optional cloud backup
+- User accounts or device-based auth
+- Safer sync rules on the backend
+- Real settings persistence across the app
+- Habit editing instead of delete and re-add
+- Better stats over months
+- Reminders and notifications
+- A proper privacy policy before public release
+
 ## Notes
 
-This project is currently set up for local development. The cloud sync endpoint in the mobile app should be changed to the real deployed backend URL before using sync outside your local machine.
+Secrets live in `.env` files and should not be committed.
 
-Secrets should stay in `.env` files and should not be committed.
-
-## Android release
-
-The app is configured for Google Play with:
-
-```text
-android.package: com.gulzey.habitsync
-android.versionCode: 1
-```
-
-Build a Play Store app bundle:
-
-```bash
-npx eas-cli build --platform android --profile production
-```
-
-Submit the latest Android build to the internal testing track:
-
-```bash
-npx eas-cli submit --platform android --profile production --latest
-```
-
-The first Play Console release usually goes through internal testing before production. You will still need to complete the Play Console listing, content rating, data safety, screenshots, and privacy policy fields.
+The app icon is in `assets/`, and the Play Store version should be built again whenever the icon or app config changes.
