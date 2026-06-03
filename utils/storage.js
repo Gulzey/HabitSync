@@ -2,7 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HABITS_STORAGE_KEY = 'habitsync:habits';
 const USER_NAME_STORAGE_KEY = 'habitsync:userName';
-const CLOUD_SYNC_ENDPOINT = 'https://api.myhabitsapp.com/api/sync';
 
 function normalizeDate(dateString) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
@@ -101,32 +100,6 @@ export async function saveUserName(userName) {
   await AsyncStorage.setItem(USER_NAME_STORAGE_KEY, nextUserName);
 
   return nextUserName;
-}
-
-export async function syncDataWithCloud(userId) {
-  if (!userId) {
-    return false;
-  }
-
-  try {
-    const habits = await loadHabits();
-    const response = await fetch(CLOUD_SYNC_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId,
-        habits,
-        syncedAt: new Date().toISOString(),
-      }),
-    });
-
-    return response.ok;
-  } catch {
-    return false;
-  }
 }
 
 export async function toggleHabit(habitId, dateString) {
