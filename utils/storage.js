@@ -88,8 +88,9 @@ export async function saveHabits(habits) {
 export async function loadUserName() {
   try {
     const storedUserName = await AsyncStorage.getItem(USER_NAME_STORAGE_KEY);
+    const normalizedUserName = storedUserName?.trim().slice(0, MAX_USER_NAME_LENGTH);
 
-    return storedUserName || 'User';
+    return normalizedUserName || 'User';
   } catch (error) {
     console.warn('Failed to load user name from storage.', error);
     return 'User';
