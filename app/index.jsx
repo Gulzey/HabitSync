@@ -80,6 +80,8 @@ const MOTIVATIONAL_QUOTES = [
   'Make today easy to repeat.',
 ];
 
+const MAX_USER_NAME_LENGTH = 10;
+
 function getTodayString() {
   const today = new Date();
   const year = today.getFullYear();
@@ -510,7 +512,7 @@ export default function DashboardScreen() {
   }
 
   async function handleSaveUserName() {
-    const nextUserName = draftUserName.trim() || 'User';
+    const nextUserName = draftUserName.trim().slice(0, MAX_USER_NAME_LENGTH) || 'User';
 
     setUserName(nextUserName);
     setDraftUserName(nextUserName);
@@ -591,8 +593,9 @@ export default function DashboardScreen() {
               <TextInput
                 autoCapitalize="words"
                 autoFocus
+                maxLength={MAX_USER_NAME_LENGTH}
                 onBlur={handleSaveUserName}
-                onChangeText={setDraftUserName}
+                onChangeText={(text) => setDraftUserName(text.slice(0, MAX_USER_NAME_LENGTH))}
                 onSubmitEditing={handleSaveUserName}
                 returnKeyType="done"
                 selectTextOnFocus

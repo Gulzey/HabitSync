@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HABITS_STORAGE_KEY = 'habitsync:habits';
 const USER_NAME_STORAGE_KEY = 'habitsync:userName';
+const MAX_USER_NAME_LENGTH = 10;
 
 function normalizeDate(dateString) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
@@ -96,7 +97,7 @@ export async function loadUserName() {
 }
 
 export async function saveUserName(userName) {
-  const nextUserName = userName.trim() || 'User';
+  const nextUserName = userName.trim().slice(0, MAX_USER_NAME_LENGTH) || 'User';
   await AsyncStorage.setItem(USER_NAME_STORAGE_KEY, nextUserName);
 
   return nextUserName;
